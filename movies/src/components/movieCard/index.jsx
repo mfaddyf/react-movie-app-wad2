@@ -6,6 +6,8 @@ import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
+import Box from "@mui/material/Box";
 import CalendarIcon from "@mui/icons-material/CalendarTodayTwoTone";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import Grid from "@mui/material/Grid";
@@ -16,7 +18,9 @@ import { useContext } from "react";
 import { MoviesContext } from "../../contexts/moviesContext";
 
 export default function MovieCard({ movie, action }) {
-  const { favorites, addToFavorites } = useContext(MoviesContext);
+  const { favorites, addToFavorites, mustWatch } = useContext(MoviesContext);
+
+  const isMustWatch = mustWatch.includes(movie.id);
 
   if (favorites.find((id) => id === movie.id)) {
     movie.favorite = true;
@@ -34,10 +38,19 @@ export default function MovieCard({ movie, action }) {
     <Card>
       <CardHeader
         avatar={
-          movie.favorite ? (
-            <Avatar sx={{ backgroundColor: 'red' }}>
-              <FavoriteIcon />
-            </Avatar>
+          movie.favorite || isMustWatch ? (
+            <Box sx={{ display: "flex", gap: 0.5 }}>
+              {movie.favorite && (
+                <Avatar sx={{ backgroundColor: 'red' }} title="In your favorites">
+                  <FavoriteIcon />
+                </Avatar>
+              )}
+              {isMustWatch && (
+                <Avatar sx={{ backgroundColor: 'primary.main' }} title="On your must watch list">
+                  <PlaylistAddCheckIcon />
+                </Avatar>
+              )}
+            </Box>
           ) : null
         }
         title={
