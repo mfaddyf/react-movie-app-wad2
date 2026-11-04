@@ -13,6 +13,9 @@ import img from '../../images/pexels-dziana-hasanbekava-5480827.jpg'
 import { getGenres } from "../../api/tmdb-api";
 import { useQuery } from '@tanstack/react-query';
 import Spinner from '../spinner';
+import Box from "@mui/material/Box";
+import Slider from "@mui/material/Slider";
+import SortIcon from "@mui/icons-material/Sort";
 
 const formControl =
 {
@@ -53,7 +56,17 @@ export default function FilterMoviesCard(props) {
         handleChange(e, "genre", e.target.value);
     };
 
+    const handleRatingChange = (e, value) => {
+        handleChange(e, "rating", value);
+    };
 
+    const handleYearChange = (e) => {
+        handleChange(e, "year", e.target.value);
+    };
+
+    const handleSortChange = (e) => {
+        handleChange(e, "sort", e.target.value);
+    };
 
     return (
         <Card
@@ -93,6 +106,41 @@ export default function FilterMoviesCard(props) {
                         })}
                     </Select>
                 </FormControl>
+                <FormControl sx={{ ...formControl }}>
+                    <InputLabel id="year-label">Release year</InputLabel>
+                    <Select
+                        labelId="year-label"
+                        id="year-select"
+                        value={props.yearFilter}
+                        onChange={handleYearChange}
+                    >
+                        <MenuItem value="all">All years</MenuItem>
+                        {props.years.map((year) => (
+                            <MenuItem key={year} value={year}>
+                                {year}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <Box sx={{ ...formControl, px: 2, pt: 1, borderRadius: 1, boxSizing: "border-box" }}>
+                    <Typography id="rating-slider-label" variant="body2">
+                        Minimum rating: {props.ratingFilter}
+                    </Typography>
+                    <Slider
+                        aria-labelledby="rating-slider-label"
+                        value={props.ratingFilter}
+                        onChange={handleRatingChange}
+                        min={0}
+                        max={10}
+                        step={0.5}
+                        marks={[
+                            { value: 0, label: "0" },
+                            { value: 5, label: "5" },
+                            { value: 10, label: "10" },
+                        ]}
+                        valueLabelDisplay="auto"
+                    />
+                </Box>
             </CardContent>
             <CardMedia
                 sx={{ height: 300 }}
@@ -101,10 +149,26 @@ export default function FilterMoviesCard(props) {
             />
             <CardContent>
                 <Typography variant="h5" component="h1">
-                    <SearchIcon fontSize="large" />
-                    Filter the movies.
-                    <br />
+                    <SortIcon fontSize="large" />
+                    Sort the movies.
                 </Typography>
+                <FormControl sx={{ ...formControl }}>
+                    <InputLabel id="sort-label">Sort by</InputLabel>
+                    <Select
+                        labelId="sort-label"
+                        id="sort-select"
+                        value={props.sortBy}
+                        onChange={handleSortChange}
+                    >
+                        <MenuItem value="default">Default order</MenuItem>
+                        <MenuItem value="ratingDesc">Highest rated</MenuItem>
+                        <MenuItem value="ratingAsc">Lowest rated</MenuItem>
+                        <MenuItem value="dateDesc">Newest first</MenuItem>
+                        <MenuItem value="dateAsc">Oldest first</MenuItem>
+                        <MenuItem value="titleAsc">Title A–Z</MenuItem>
+                        <MenuItem value="titleDesc">Title Z–A</MenuItem>
+                    </Select>
+                </FormControl>
             </CardContent>
         </Card>
     );
