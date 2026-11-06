@@ -3,8 +3,9 @@ import Header from "../headerMovieList";
 import FilterCard from "../filterMoviesCard";
 import MovieList from "../movieList";
 import Grid from "@mui/material/Grid";
+import Pagination from "@mui/material/Pagination";
 
-function MovieListPageTemplate({ movies, title, action }) {
+function MovieListPageTemplate({ movies, title, action, page, totalPages, onPageChange }) {
   const [nameFilter, setNameFilter] = useState("");
   const [genreFilter, setGenreFilter] = useState("0");
   const [ratingFilter, setRatingFilter] = useState(0);
@@ -73,6 +74,22 @@ function MovieListPageTemplate({ movies, title, action }) {
           />
         </Grid>
         <MovieList action={action} movies={displayedMovies}></MovieList>
+        {/* Only list pages that pass totalPages get pagination (not favourites / must watch) */}
+        {totalPages > 1 && (
+          <Grid size={12} sx={{ display: "flex", justifyContent: "center", pb: 4 }}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              color="primary"
+              showFirstButton
+              showLastButton
+              onChange={(e, value) => {
+                onPageChange(value);
+                window.scrollTo(0, 0);
+              }}
+            />
+          </Grid>
+        )}
       </Grid>
     </Grid>
   );
