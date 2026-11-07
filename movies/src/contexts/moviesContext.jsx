@@ -4,11 +4,20 @@ export const MoviesContext = React.createContext(null);
 
 const MoviesContextProvider = (props) => {
     const [favorites, setFavorites] = useState([])
-    const [myReviews, setMyReviews] = useState({})
+    // Your own reviews, keyed by movie id. Loaded from localStorage so they survive a page refresh.
+    const [myReviews, setMyReviews] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem("myReviews")) || {};
+        } catch {
+            return {};
+        }
+    })
     const [mustWatch, setMustWatch] = useState([]);
 
     const addReview = (movie, review) => {
-        setMyReviews({ ...myReviews, [movie.id]: review })
+        const updatedReviews = { ...myReviews, [movie.id]: review };
+        setMyReviews(updatedReviews);
+        localStorage.setItem("myReviews", JSON.stringify(updatedReviews));
     };
 
     const addToMustWatch = (movie) => {
@@ -52,6 +61,7 @@ const MoviesContextProvider = (props) => {
                 addToFavorites,
                 removeFromFavorites,
                 addReview,
+                myReviews,
                 mustWatch,
                 addToMustWatch,
                 removeFromMustWatch,

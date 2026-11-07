@@ -101,7 +101,7 @@ const ReviewForm = ({ movie }) => {
 
     return (
         <Box component="div" sx={styles.root}>
-            <Typography component="h2" variant="h3">
+            <Typography component="h2" variant="h4">
                 Write a review
             </Typography>
 
@@ -116,7 +116,7 @@ const ReviewForm = ({ movie }) => {
                     variant="filled"
                     onClose={handleSnackClose}
                 >
-                    <Typography variant="h4">
+                    <Typography variant="h6">
                         Thank you for submitting a review
                     </Typography>
                 </MuiAlert>
@@ -145,7 +145,7 @@ const ReviewForm = ({ movie }) => {
                     )}
                 />
                 {errors.author && (
-                    <Typography variant="h6" component="p">
+                    <Typography variant="body2" component="p" color="error">
                         {errors.author.message}
                     </Typography>
                 )}
@@ -174,7 +174,7 @@ const ReviewForm = ({ movie }) => {
                     )}
                 />
                 {errors.review && (
-                    <Typography variant="h6" component="p">
+                    <Typography variant="body2" component="p" color="error">
                         {errors.review.message}
                     </Typography>
                 )}

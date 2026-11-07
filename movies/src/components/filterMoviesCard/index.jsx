@@ -16,12 +16,11 @@ import Spinner from '../spinner';
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import SortIcon from "@mui/icons-material/Sort";
+import Divider from "@mui/material/Divider";
 
 const formControl =
 {
-    margin: 1,
-    minWidth: "90%",
-    backgroundColor: "rgb(255, 255, 255)"
+    width: "100%",
 };
 
 export default function FilterMoviesCard(props) {
@@ -69,31 +68,33 @@ export default function FilterMoviesCard(props) {
     };
 
     return (
-        <Card
-            sx={{
-                backgroundColor: "rgb(204, 204, 0)"
-            }}
-            variant="outlined">
-            <CardContent>
-                <Typography variant="h5" component="h1">
-                    <SearchIcon fontSize="large" />
-                    Filter the movies.
+        <Card>
+            {/* Short image banner across the top of the sidebar */}
+            <CardMedia
+                sx={{ height: 90 }}
+                image={img}
+                title="Filter"
+            />
+            <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Typography variant="h6" component="h2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <SearchIcon fontSize="small" color="primary" />
+                    Filter the movies
                 </Typography>
                 <TextField
                     sx={{ ...formControl }}
                     id="filled-search"
-                    label="Search field"
+                    label={props.searchLabel || "Search by title"}
                     type="search"
-                    variant="filled"
+                    size="small"
                     value={props.titleFilter}
                     onChange={handleTextChange}
                 />
-                <FormControl sx={{ ...formControl }}>
+                <FormControl sx={{ ...formControl }} size="small">
                     <InputLabel id="genre-label">Genre</InputLabel>
                     <Select
                         labelId="genre-label"
                         id="genre-select"
-                        defaultValue=""
+                        label="Genre"
                         value={props.genreFilter}
                         onChange={handleGenreChange}
                     >
@@ -106,11 +107,12 @@ export default function FilterMoviesCard(props) {
                         })}
                     </Select>
                 </FormControl>
-                <FormControl sx={{ ...formControl }}>
+                <FormControl sx={{ ...formControl }} size="small">
                     <InputLabel id="year-label">Release year</InputLabel>
                     <Select
                         labelId="year-label"
                         id="year-select"
+                        label="Release year"
                         value={props.yearFilter}
                         onChange={handleYearChange}
                     >
@@ -122,12 +124,13 @@ export default function FilterMoviesCard(props) {
                         ))}
                     </Select>
                 </FormControl>
-                <Box sx={{ ...formControl, px: 2, pt: 1, borderRadius: 1, boxSizing: "border-box" }}>
-                    <Typography id="rating-slider-label" variant="body2">
-                        Minimum rating: {props.ratingFilter}
+                <Box sx={{ ...formControl, px: 1 }}>
+                    <Typography id="rating-slider-label" variant="body2" color="text.secondary">
+                        Minimum rating: <strong>{props.ratingFilter}</strong>
                     </Typography>
                     <Slider
                         aria-labelledby="rating-slider-label"
+                        size="small"
                         value={props.ratingFilter}
                         onChange={handleRatingChange}
                         min={0}
@@ -141,22 +144,19 @@ export default function FilterMoviesCard(props) {
                         valueLabelDisplay="auto"
                     />
                 </Box>
-            </CardContent>
-            <CardMedia
-                sx={{ height: 300 }}
-                image={img}
-                title="Filter"
-            />
-            <CardContent>
-                <Typography variant="h5" component="h1">
-                    <SortIcon fontSize="large" />
-                    Sort the movies.
+
+                <Divider />
+
+                <Typography variant="h6" component="h2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <SortIcon fontSize="small" color="primary" />
+                    Sort the movies
                 </Typography>
-                <FormControl sx={{ ...formControl }}>
+                <FormControl sx={{ ...formControl }} size="small">
                     <InputLabel id="sort-label">Sort by</InputLabel>
                     <Select
                         labelId="sort-label"
                         id="sort-select"
+                        label="Sort by"
                         value={props.sortBy}
                         onChange={handleSortChange}
                     >

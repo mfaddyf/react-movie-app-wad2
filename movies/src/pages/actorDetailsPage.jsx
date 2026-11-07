@@ -1,9 +1,14 @@
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import Chip from "@mui/material/Chip";
+import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import CakeIcon from "@mui/icons-material/Cake";
+import PlaceIcon from "@mui/icons-material/Place";
 import Spinner from "../components/spinner";
 import { getActor } from "../api/tmdb-api";
 import img from "../images/film-poster-placeholder.png";
@@ -11,6 +16,7 @@ import ActorMovies from "../components/actorMovies";
 
 const ActorDetailsPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: actor, error, isPending, isError } = useQuery({
     queryKey: ["actor", { id: id }],
     queryFn: getActor,
@@ -20,54 +26,68 @@ const ActorDetailsPage = () => {
   if (isError) return <h1>{error.message}</h1>;
 
   return (
-    <Grid container spacing={4} sx={{ padding: "20px" }}>
-      <Grid size={{ xs: 12, md: 3 }}>
-        <img
+    <Container maxWidth="xl" sx={{ py: 3, pb: 6 }}>
+      <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+        <IconButton aria-label="go back" size="small" onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </IconButton>
+        <IconButton aria-label="go forward" size="small" onClick={() => navigate(+1)}>
+          <ArrowForwardIcon />
+        </IconButton>
+      </Box>
+
+      {/* Photo on the left, details on the right; stacks on small screens */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", sm: "200px 1fr", md: "260px 1fr" },
+          gap: 4,
+          alignItems: "start",
+        }}
+      >
+        <Box
+          component="img"
           src={
             actor.profile_path
               ? `https://image.tmdb.org/t/p/w500${actor.profile_path}`
               : img
           }
           alt={actor.name}
-          style={{ width: "100%", borderRadius: 8 }}
+          sx={{
+            width: { xs: 180, sm: "100%" },
+            aspectRatio: "2 / 3",
+            objectFit: "cover",
+            borderRadius: 2,
+            boxShadow: "0 12px 30px rgba(0,0,0,0.5)",
+            position: { sm: "sticky" },
+            top: { sm: 76 },
+          }}
         />
-      </Grid>
-      <Grid size={{ xs: 12, md: 9 }}>
-        <Typography variant="h3" component="h2">
-          {actor.name}
-        </Typography>
-        <Paper
-          component="ul"
-          sx={{ display: "flex", flexWrap: "wrap", listStyle: "none", gap: 1, p: 1.5, my: 2 }}
-        >
-          <li>
+
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="h3" component="h1">
+            {actor.name}
+          </Typography>
+
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, my: 2 }}>
             <Chip label={actor.known_for_department} color="primary" />
-          </li>
-          {actor.birthday && (
-            <li>
-              <Chip label={`Born: ${actor.birthday}`} />
-            </li>
-          )}
-          {actor.place_of_birth && (
-            <li>
-              <Chip label={actor.place_of_birth} />
-            </li>
-          )}
-          {actor.deathday && (
-            <li>
-              <Chip label={`Died: ${actor.deathday}`} />
-            </li>
-          )}
-        </Paper>
-        <Typography variant="h5" component="h3">
-          Biography
-        </Typography>
-        <Typography variant="body1">
-          {actor.biography || "No biography available."}
-        </Typography>
-        <ActorMovies actorId={id} />
-      </Grid>
-    </Grid>
+            {actor.birthday && <Chip icon={<CakeIcon />} label={`Born: ${actor.birthday}`} />}
+            {actor.place_of_birth && <Chip icon={<PlaceIcon />} label={actor.place_of_birth} />}
+            {actor.deathday && <Chip label={`Died: ${actor.deathday}`} />}
+          </Box>
+
+          <Typography variant="h5" component="h2" sx={{ mb: 1 }}>
+            Biography
+          </Typography>
+          {/* whiteSpace keeps the paragraph breaks from TMDB's biography text */}
+          <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 900, whiteSpace: "pre-line" }}>
+            {actor.biography || "No biography available."}
+          </Typography>
+
+          <ActorMovies actorId={id} />
+        </Box>
+      </Box>
+    </Container>
   );
 };
 

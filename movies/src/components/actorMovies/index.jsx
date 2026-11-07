@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Spinner from "../spinner";
 import MovieList from "../movieList";
@@ -23,17 +23,15 @@ const ActorMovies = ({ actorId }) => {
     .slice(0, 12);
 
   return (
-    <>
-      <Typography variant="h5" component="h3" sx={{ mt: 3 }}>
+    <Box sx={{ mt: 4 }}>
+      <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
         Known For
       </Typography>
-      <Grid container>
-        <MovieList
-          movies={movies}
-          action={(movie) => <AddToFavoritesIcon movie={movie} />}
-        />
-      </Grid>
-    </>
+      <MovieList
+        movies={movies}
+        action={(movie) => <AddToFavoritesIcon movie={movie} />}
+      />
+    </Box>
   );
 };
 

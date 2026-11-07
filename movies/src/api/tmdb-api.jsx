@@ -190,3 +190,53 @@ export const getActorMovieCredits = ({ queryKey }) => {
   });
 };
 
+// Searches all of TMDB by title (not just the movies on the current page).
+// If a year is chosen it's sent too, so TMDB only returns movies from that year.
+export const searchMovies = ({ queryKey }) => {
+  const [, { query, year, page }] = queryKey;
+  const yearParam = year !== "all" ? `&primary_release_year=${year}` : "";
+  return fetch(
+    `https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&include_adult=false&query=${encodeURIComponent(query)}${yearParam}&page=${page}`
+  ).then((response) => {
+    if (!response.ok) {
+      return response.json().then((error) => {
+        throw new Error(error.status_message || "Something went wrong");
+      });
+    }
+    return response.json();
+  });
+};
+
+// The filter card's sort options, translated into TMDB's sort_by values
+const tmdbSort = {
+  default: "popularity.desc",
+  ratingDesc: "vote_average.desc",
+  ratingAsc: "vote_average.asc",
+  dateDesc: "primary_release_date.desc",
+  dateAsc: "primary_release_date.asc",
+  titleAsc: "title.asc",
+  titleDesc: "title.desc",
+};
+
+// Filters all of TMDB by genre, year and minimum rating using /discover/movie
+export const getFilteredMovies = ({ queryKey }) => {
+  const [, { genre, year, rating, sort, page }] = queryKey;
+  let params = `&sort_by=${tmdbSort[sort] || "popularity.desc"}&page=${page}`;
+  if (Number(genre) > 0) params += `&with_genres=${genre}`;
+  if (year !== "all") params += `&primary_release_year=${year}`;
+  if (rating > 0) params += `&vote_average.gte=${rating}`;
+  // When rating matters, skip movies with only a handful of votes (otherwise
+  // a film with one 10/10 vote would come first)
+  if (rating > 0 || sort.startsWith("rating")) params += "&vote_count.gte=50";
+
+  return fetch(
+    `https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&include_adult=false&include_video=false${params}`
+  ).then((response) => {
+    if (!response.ok) {
+      return response.json().then((error) => {
+        throw new Error(error.status_message || "Something went wrong");
+      });
+    }
+    return response.json();
+  });
+};

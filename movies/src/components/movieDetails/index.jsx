@@ -1,28 +1,24 @@
 import Chip from "@mui/material/Chip";
-import Paper from "@mui/material/Paper";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import MonetizationIcon from "@mui/icons-material/MonetizationOn";
-import StarRate from "@mui/icons-material/StarRate";
+import Typography from "@mui/material/Typography";
 import InfoIcon from "@mui/icons-material/Info";
 import PeopleIcon from "@mui/icons-material/People";
 import RateReviewIcon from "@mui/icons-material/RateReview";
+import MonetizationIcon from "@mui/icons-material/MonetizationOn";
+import PublicIcon from "@mui/icons-material/Public";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
 import { useState } from "react";
 import MovieReviews from "../movieReviews";
 import MovieCast from "../movieCast";
 
-const root = {
-    display: "flex",
-    justifyContent: "center",
-    flexWrap: "wrap",
-    listStyle: "none",
-    padding: 1.5,
-    margin: 0,
-};
-const chip = { margin: 0.5 };
+// Section label used inside the Overview tab
+const Label = ({ children }) => (
+    <Typography variant="body2" color="text.secondary" sx={{ textTransform: "uppercase", letterSpacing: 1, fontWeight: 600, mb: 1 }}>
+        {children}
+    </Typography>
+);
 
 const MovieDetails = ({ movie }) => {
     // Which tab is showing: 0 = Overview, 1 = Cast, 2 = Reviews
@@ -33,57 +29,51 @@ const MovieDetails = ({ movie }) => {
             <Tabs
                 value={tab}
                 onChange={(e, newValue) => setTab(newValue)}
-                variant="fullWidth"
-                sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}
+                sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}
             >
-                <Tab icon={<InfoIcon />} iconPosition="start" label="Overview" />
-                <Tab icon={<PeopleIcon />} iconPosition="start" label="Cast" />
-                <Tab icon={<RateReviewIcon />} iconPosition="start" label="Reviews" />
+                <Tab icon={<InfoIcon fontSize="small" />} iconPosition="start" label="Overview" />
+                <Tab icon={<PeopleIcon fontSize="small" />} iconPosition="start" label="Cast" />
+                <Tab icon={<RateReviewIcon fontSize="small" />} iconPosition="start" label="Reviews" />
             </Tabs>
 
             {/* Overview tab */}
             {tab === 0 && (
-                <Box>
-                    <Typography variant="h5" component="h3">
-                        Overview
-                    </Typography>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <Box>
+                        <Label>Overview</Label>
+                        <Typography variant="body1" sx={{ maxWidth: 800 }}>
+                            {movie.overview}
+                        </Typography>
+                    </Box>
 
-                    <Typography variant="h6" component="p">
-                        {movie.overview}
-                    </Typography>
+                    <Box>
+                        <Label>Genres</Label>
+                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                            {movie.genres.map((g) => (
+                                <Chip key={g.name} label={g.name} color="primary" variant="outlined" />
+                            ))}
+                        </Box>
+                    </Box>
 
-                    <Paper component="ul" sx={{ ...root }}>
-                        <li>
-                            <Chip label="Genres" sx={{ ...chip }} color="primary" />
-                        </li>
-                        {movie.genres.map((g) => (
-                            <li key={g.name}>
-                                <Chip label={g.name} sx={{ ...chip }} />
-                            </li>
-                        ))}
-                    </Paper>
-                    <Paper component="ul" sx={{ ...root }}>
-                        <Chip icon={<AccessTimeIcon />} label={`${movie.runtime} min.`} />
-                        <Chip
-                            icon={<MonetizationIcon />}
-                            label={`${movie.revenue.toLocaleString()}`}
-                        />
-                        <Chip
-                            icon={<StarRate />}
-                            label={`${movie.vote_average} (${movie.vote_count})`}
-                        />
-                        <Chip label={`Released: ${movie.release_date}`} />
-                    </Paper>
-                    <Paper component="ul" sx={{ ...root }}>
-                        <li>
-                            <Chip label="Production Countries" sx={{ ...chip }} color="primary" />
-                        </li>
-                        {movie.production_countries.map((c) => (
-                            <li key={c.iso_3166_1}>
-                                <Chip label={c.name} sx={{ ...chip }} />
-                            </li>
-                        ))}
-                    </Paper>
+                    {/* Small info cards that wrap onto new rows on narrow screens */}
+                    <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 2 }}>
+                        <Card sx={{ p: 2 }}>
+                            <Label>Revenue</Label>
+                            <Typography variant="h6" component="p" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <MonetizationIcon fontSize="small" color="primary" />
+                                {movie.revenue > 0 ? `$${movie.revenue.toLocaleString()}` : "Not reported"}
+                            </Typography>
+                        </Card>
+                        <Card sx={{ p: 2 }}>
+                            <Label>Production Countries</Label>
+                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, alignItems: "center" }}>
+                                <PublicIcon fontSize="small" color="primary" />
+                                {movie.production_countries.map((c) => (
+                                    <Chip key={c.iso_3166_1} label={c.name} />
+                                ))}
+                            </Box>
+                        </Card>
+                    </Box>
                 </Box>
             )}
 
